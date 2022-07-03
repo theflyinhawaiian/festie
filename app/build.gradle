@@ -3,6 +3,11 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+def secretValuesFile = rootProject.file("secret.properties")
+def secretProperties = new Properties()
+
+secretProperties.load(new FileInputStream(secretValuesFile))
+
 android {
     buildFeatures {
         viewBinding true
@@ -28,14 +33,16 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "SPOTIFY_CLIENT_ID", "")
+        }
+
+        debug {
+            buildConfigField("String", "SPOTIFY_CLIENT_ID", secretProperties['spotifyClientId'])
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
     }
 }
 

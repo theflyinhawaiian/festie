@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         val authRequest: AuthorizationRequest = AuthorizationRequest.Builder(
             serviceConfig,
-            "9d2216a850c5414f9986f99f6e2f2907",
+            BuildConfig.SPOTIFY_CLIENT_ID,
             ResponseTypeValues.CODE,
             Uri.parse("com.mullipr.festie:/authorized")
         ).setScope("playlist-read-collaborative playlist-modify-public user-modify-playback-state user-read-playback-state user-read-currently-playing app-remote-control")
