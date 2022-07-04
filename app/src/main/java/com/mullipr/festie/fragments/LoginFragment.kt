@@ -10,16 +10,16 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.mullipr.festie.R
 import com.mullipr.festie.databinding.MainPageFragmentBinding
-import com.mullipr.festie.viewModel.MainPageViewModel
+import com.mullipr.festie.viewModel.LoginViewModel
 
-class MainPageFragment : Fragment() {
+class LoginFragment : Fragment() {
     companion object {
-        fun newInstance() = MainPageFragment()
+        fun newInstance() = LoginFragment()
         val RC_AUTH = 100;
     }
 
     private lateinit var binding: MainPageFragmentBinding
-    private lateinit var viewModel: MainPageViewModel
+    private lateinit var viewModel: LoginViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,7 +31,7 @@ class MainPageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[MainPageViewModel::class.java]
+        viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
 
         val loggingOut = arguments?.getBoolean("loggingOut") ?: false
 
@@ -46,7 +46,7 @@ class MainPageFragment : Fragment() {
         }
 
         if(viewModel.isUserAuthenticated()){
-            findNavController().navigate(R.id.action_mainPageFragment_to_searchArtistsFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_searchArtistsFragment)
         }
     }
 
@@ -58,7 +58,7 @@ class MainPageFragment : Fragment() {
 
         val authenticated = viewModel.processAuthResponse(data)
         if(authenticated){
-            findNavController().navigate(R.id.action_mainPageFragment_to_searchArtistsFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_searchArtistsFragment)
         }
     }
 

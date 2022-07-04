@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav"
-    app:startDestination="@id/mainPageFragment">
+    app:startDestination="@id/loginFragment">
     <fragment
-        android:id="@+id/mainPageFragment"
-        android:name="com.mullipr.festie.fragments.MainPageFragment"
+        android:id="@+id/loginFragment"
+        android:name="com.mullipr.festie.fragments.LoginFragment"
         android:label="main_page_fragment"
         tools:layout="@layout/main_page_fragment" >
         <argument
@@ -14,9 +14,9 @@
             app:argType="boolean"
             android:defaultValue="false" />
         <action
-            android:id="@+id/action_mainPageFragment_to_searchArtistsFragment"
+            android:id="@+id/action_loginFragment_to_searchArtistsFragment"
             app:destination="@id/searchArtistsFragment"
-            app:popUpTo="@id/mainPageFragment"
+            app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true"/>
     </fragment>
     <fragment
@@ -25,5 +25,5 @@
         android:label="search_artists_fragment"
         tools:layout="@layout/search_artists_fragment" />
     <action android:id="@+id/action_global_logout"
-        app:destination="@id/mainPageFragment"/>
+        app:destination="@id/loginFragment"/>
 </navigation>
