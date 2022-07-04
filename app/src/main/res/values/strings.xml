@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">festie</string>
+    <string name="sign_in_with_spotify">Sign in with Spotify</string>
+    <string name="logout">Logout</string>
 </resources>

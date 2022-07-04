@@ -6,7 +6,24 @@
     app:startDestination="@id/mainPageFragment">
     <fragment
         android:id="@+id/mainPageFragment"
-        android:name="com.mullipr.festie.Fragments.MainPageFragment"
+        android:name="com.mullipr.festie.fragments.MainPageFragment"
         android:label="main_page_fragment"
-        tools:layout="@layout/main_page_fragment" />
+        tools:layout="@layout/main_page_fragment" >
+        <argument
+            android:name="loggingOut"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <action
+            android:id="@+id/action_mainPageFragment_to_searchArtistsFragment"
+            app:destination="@id/searchArtistsFragment"
+            app:popUpTo="@id/mainPageFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/searchArtistsFragment"
+        android:name="com.mullipr.festie.fragments.SearchArtistsFragment"
+        android:label="search_artists_fragment"
+        tools:layout="@layout/search_artists_fragment" />
+    <action android:id="@+id/action_global_logout"
+        app:destination="@id/mainPageFragment"/>
 </navigation>

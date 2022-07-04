@@ -1,62 +1,33 @@
 package com.mullipr.festie
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import net.openid.appauth.*
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.NavHostFragment
 
 
 class MainActivity : AppCompatActivity() {
-    companion object {
-        val RC_AUTH = 100;
-    }
-
-    lateinit var authService : AuthorizationService
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val serviceConfig = AuthorizationServiceConfiguration(
-            Uri.parse("https://accounts.spotify.com/authorize"),  // authorization endpoint
-            Uri.parse("https://accounts.spotify.com/api/token")
-        )
-
-        val authRequest: AuthorizationRequest = AuthorizationRequest.Builder(
-            serviceConfig,
-            BuildConfig.SPOTIFY_CLIENT_ID,
-            ResponseTypeValues.CODE,
-            Uri.parse("com.mullipr.festie:/authorized")
-        ).setScope("playlist-read-collaborative playlist-modify-public user-modify-playback-state user-read-playback-state user-read-currently-playing app-remote-control")
-            .build()
-
-        authService = AuthorizationService(this)
-        val authIntent = authService.getAuthorizationRequestIntent(authRequest)
-
-        startActivityForResult(authIntent, RC_AUTH)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == RC_AUTH && data != null) {
-            val authResponse = AuthorizationResponse.fromIntent(data)
-            val exception = AuthorizationException.fromIntent(data)
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.app_menu, menu)
+        return true
+    }
 
-            if(authResponse == null)
-                return
-
-            authService.performTokenRequest(authResponse.createTokenExchangeRequest()
-            ) { response, _ ->
-                if(response != null){
-                    val time = System.currentTimeMillis()
-                    Log.d("[festie]", "Current time: $time")
-                    Log.d("[festie]", response.accessTokenExpirationTime.toString())
-                    Toast.makeText(this, "WE HAVE A TOKEN: ${response.accessToken}", Toast.LENGTH_LONG).show()
-                }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId){
+            R.id.action_logout -> {
+                val bundle = bundleOf("loggingOut" to true)
+                val hostFragment = supportFragmentManager.findFragmentById(R.id.navContainer) as NavHostFragment
+                hostFragment.navController.navigate(R.id.action_global_logout, bundle)
+                true
             }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }
