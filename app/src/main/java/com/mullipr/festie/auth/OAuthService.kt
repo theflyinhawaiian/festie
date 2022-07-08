@@ -1,19 +1,15 @@
 package com.mullipr.festie.auth
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.net.Uri
 import com.mullipr.festie.BuildConfig
+import com.mullipr.festie.util.SharedPrefsWrapper
 import net.openid.appauth.*
 
 class OAuthService(ctx : Context) {
-    private companion object {
-        const val REFRESH_TOKEN_SHAREDPREFS_ENTRY = "spotify_refresh_token"
-    }
-
     private val authService = AuthorizationService(ctx)
-    private val sharedPreferences = ctx.getSharedPreferences("FestiePrefs", MODE_PRIVATE)
+    private val sharedPreferences = SharedPrefsWrapper(ctx)
 
     fun getAuthIntent() : Intent {
         val serviceConfig = AuthorizationServiceConfiguration(
@@ -32,36 +28,30 @@ class OAuthService(ctx : Context) {
         return authService.getAuthorizationRequestIntent(authRequest)
     }
 
-    fun isUserAuthenticated() : Boolean {
-        val token = sharedPreferences.getString(REFRESH_TOKEN_SHAREDPREFS_ENTRY, "")
-        return token != ""
-    }
+    fun isUserAuthenticated() : Boolean = sharedPreferences.hasAccessTokens()
 
-    fun processAuthResponse(data : Intent?) : Boolean{
+    fun processAuthResponse(data : Intent?, successCallback : () -> Unit){
         if(data == null)
-            return false
+            return
 
         val authResponse = AuthorizationResponse.fromIntent(data)
         val exception = AuthorizationException.fromIntent(data)
 
         if(authResponse == null)
-            return false
+            return
 
         authService.performTokenRequest(authResponse.createTokenExchangeRequest()
         ) { response, _ ->
-            if(response != null){
-                val editor = sharedPreferences.edit()
-                editor.putString(REFRESH_TOKEN_SHAREDPREFS_ENTRY, response.refreshToken)
-                editor.apply()
+            if(response?.accessToken != null && response.refreshToken != null){
+                sharedPreferences.saveAccessTokens(response.accessToken!!, response.refreshToken!!)
+                successCallback()
             }
         }
 
-        return true
+        return
     }
 
-    fun invalidateRefreshToken() {
-        val editor = sharedPreferences.edit()
-        editor.putString(REFRESH_TOKEN_SHAREDPREFS_ENTRY, "")
-        editor.apply()
+    fun invalidateTokens() {
+        sharedPreferences.invalidateAccessTokens()
     }
 }
