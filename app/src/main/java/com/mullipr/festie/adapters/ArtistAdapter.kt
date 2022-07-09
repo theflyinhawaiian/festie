@@ -5,9 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mullipr.festie.databinding.ArtistCardBinding
 import com.mullipr.festie.model.Artist
-import com.mullipr.festie.util.DrawableUtils
 
-class ArtistAdapter(var list : List<Artist>) : RecyclerView.Adapter<ArtistAdapter.ViewHolder>() {
+class ArtistAdapter(var list : List<Artist>,
+                    val listener : (Artist) -> Unit) : RecyclerView.Adapter<ArtistAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         return ViewHolder(
@@ -20,9 +20,14 @@ class ArtistAdapter(var list : List<Artist>) : RecyclerView.Adapter<ArtistAdapte
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = list[position]
         holder.bind(
-            list[position]
+            item
         )
+        holder.itemView.setOnClickListener {
+            listener(item)
+            holder.clicked()
+        }
     }
 
     override fun getItemCount(): Int = list.size
@@ -34,6 +39,10 @@ class ArtistAdapter(var list : List<Artist>) : RecyclerView.Adapter<ArtistAdapte
             }
 
             item.artistName.text = artist.name
+        }
+
+        fun clicked(){
+            item.artistCheckbox.isChecked = !item.artistCheckbox.isChecked
         }
     }
 }

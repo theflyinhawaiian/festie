@@ -2,11 +2,13 @@ package com.mullipr.festie.viewModel
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.mullipr.festie.api.ArtistsService
 import com.mullipr.festie.api.endpoints.SearchResource
+import com.mullipr.festie.model.Artist
 import com.mullipr.festie.model.SearchArtistsUiState
 import com.mullipr.festie.util.DrawableUtils
 import kotlinx.coroutines.Dispatchers
@@ -22,13 +24,18 @@ class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
 
     private val artistsService = ArtistsService(searchResource)
 
-    fun fetchArtists() {
+    private val selectedArtists = mutableListOf<Artist>()
+
+    fun searchArtists(text : String?) {
+        if(text == null)
+            return
+
         _uiState.update {
             it.copy(isLoading = true)
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            val artists = artistsService.search("madeon")
+            val artists = artistsService.search(text)
 
             for(artist in artists){
                 if(artist.image?.url != null)
@@ -46,6 +53,14 @@ class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
                 )
             }
         }
+    }
+
+    fun artistSelected(artist : Artist){
+        if(artist in selectedArtists)
+            selectedArtists.remove(artist)
+        else
+            selectedArtists.add(artist)
+        Log.d("festie", "selected artists changed: $selectedArtists")
     }
 
     class Factory(private val searchResource : SearchResource) : ViewModelProvider.Factory{

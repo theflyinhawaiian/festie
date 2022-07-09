@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -14,8 +15,10 @@ import com.mullipr.festie.adapters.ArtistAdapter
 import com.mullipr.festie.api.ApiService
 import com.mullipr.festie.api.endpoints.SearchResource
 import com.mullipr.festie.databinding.SearchArtistsFragmentBinding
+import com.mullipr.festie.model.Artist
 import com.mullipr.festie.viewModel.SearchArtistsViewModel
 import kotlinx.coroutines.launch
+import okhttp3.internal.notifyAll
 
 class SearchArtistsFragment : Fragment(){
     private lateinit var binding : SearchArtistsFragmentBinding
@@ -26,22 +29,29 @@ class SearchArtistsFragment : Fragment(){
         SearchArtistsViewModel.Factory(res)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        viewModel.fetchArtists()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = SearchArtistsFragmentBinding.inflate(layoutInflater)
 
-        artistAdapter = ArtistAdapter(listOf()).also {
+        val artistClickedListener = { artist : Artist -> viewModel.artistSelected(artist) }
+
+        artistAdapter = ArtistAdapter(listOf(), artistClickedListener).also {
             binding.artistsView.adapter = it
         }
         binding.artistsView.layoutManager = LinearLayoutManager(requireContext())
+
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(text: String?): Boolean {
+                viewModel.searchArtists(text)
+                return true
+            }
+
+            override fun onQueryTextChange(text: String?): Boolean {
+                return false
+            }
+        })
 
         return binding.root
     }
