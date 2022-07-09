@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.mullipr.festie.api.ArtistsService
 import com.mullipr.festie.api.endpoints.SearchResource
 import com.mullipr.festie.model.SearchArtistsUiState
+import com.mullipr.festie.util.DrawableUtils
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -22,8 +24,13 @@ class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
             it.copy(isLoading = true)
         }
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val artists = artistsService.search("madeon")
+
+            for(artist in artists){
+                if(artist.image?.url != null)
+                    artist.imageDrawable = DrawableUtils.fromUrl(artist.image.url)
+            }
 
             _uiState.update {
                 it.copy(

@@ -6,7 +6,7 @@ import java.net.URL
 
 class DrawableUtils {
     companion object {
-        fun fromURL (url : String) : Drawable?{
+        fun fromUrl (url : String?) : Drawable?{
             return try {
                 val `is`: InputStream = URL(url).content as InputStream
                 Drawable.createFromStream(`is`, "src name")

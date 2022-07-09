@@ -29,8 +29,9 @@ class ArtistAdapter(var list : List<Artist>) : RecyclerView.Adapter<ArtistAdapte
 
     inner class ViewHolder(private var item : ArtistCardBinding) : RecyclerView.ViewHolder(item.root){
         fun bind(artist: Artist){
-            if(artist.image != null)
-                item.artistImage.setImageDrawable(DrawableUtils.fromURL(artist.image.url))
+            if(artist.imageDrawable != null){
+                item.artistImage.setImageDrawable(artist.imageDrawable)
+            }
 
             item.artistName.text = artist.name
         }
