@@ -15,7 +15,7 @@ class SearchArtistsFragment : Fragment(){
     private lateinit var binding : SearchArtistsFragmentBinding
 
     private val viewModel : SearchArtistsViewModel by viewModels {
-        val res = ApiService(ApiService.baseURL, requireContext()).get().create(SearchResource::class.java)
+        val res = ApiService(requireContext()).get().create(SearchResource::class.java)
         SearchArtistsViewModel.Factory(res)
     }
 

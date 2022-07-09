@@ -13,6 +13,6 @@ interface SearchResource {
     suspend fun search(@Query(value="q", encoded=true) query: String?): Response<SearchResult>
 
     companion object {
-        fun get(ctx : Context) : SearchResource = ApiService(ApiService.baseURL, ctx).get().create(SearchResource::class.java)
+        fun get(ctx : Context) : SearchResource = ApiService(ctx).get().create(SearchResource::class.java)
     }
 }

@@ -6,17 +6,19 @@ import android.net.Uri
 import com.mullipr.festie.BuildConfig
 import com.mullipr.festie.util.SharedPrefsWrapper
 import net.openid.appauth.*
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class OAuthService(ctx : Context) {
     private val authService = AuthorizationService(ctx)
     private val sharedPreferences = SharedPrefsWrapper(ctx)
 
-    fun getAuthIntent() : Intent {
-        val serviceConfig = AuthorizationServiceConfiguration(
-            Uri.parse("https://accounts.spotify.com/authorize"),
-            Uri.parse("https://accounts.spotify.com/api/token")
-        )
+    private val serviceConfig = AuthorizationServiceConfiguration(
+        Uri.parse("https://accounts.spotify.com/authorize"),
+        Uri.parse("https://accounts.spotify.com/api/token")
+    )
 
+    fun getAuthIntent() : Intent {
         val authRequest: AuthorizationRequest = AuthorizationRequest.Builder(
             serviceConfig,
             BuildConfig.SPOTIFY_CLIENT_ID,
@@ -26,6 +28,27 @@ class OAuthService(ctx : Context) {
             .build()
 
         return authService.getAuthorizationRequestIntent(authRequest)
+    }
+
+    suspend fun refreshAuthToken() : String? {
+        return suspendCoroutine { continuation ->
+            val refreshToken = sharedPreferences.getRefreshToken()
+            val tokenRequest =
+                TokenRequest.Builder(serviceConfig, BuildConfig.SPOTIFY_CLIENT_ID)
+                    .setGrantType(GrantTypeValues.REFRESH_TOKEN)
+                    .setRefreshToken(refreshToken)
+                    .build()
+
+            authService.performTokenRequest(tokenRequest) { response, exception ->
+                if (response != null && exception == null) {
+                    sharedPreferences.saveAccessTokens(response.accessToken!!,
+                        response.refreshToken!!)
+                    continuation.resume(response.accessToken!!)
+                } else {
+                    continuation.resume(null)
+                }
+            }
+        }
     }
 
     fun isUserAuthenticated() : Boolean = sharedPreferences.hasAccessTokens()
