@@ -1,5 +1,7 @@
 package com.mullipr.festie.viewModel
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.*
 
 class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
     private val _uiState = MutableStateFlow(SearchArtistsUiState(listOf(), false, listOf()))
@@ -30,6 +33,10 @@ class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
             for(artist in artists){
                 if(artist.image?.url != null)
                     artist.imageDrawable = DrawableUtils.fromUrl(artist.image.url)
+                else {
+                    val r = Random()
+                    artist.imageDrawable = ColorDrawable(Color.argb(255, r.nextInt(256), r.nextInt(256), r.nextInt(256)))
+                }
             }
 
             _uiState.update {
