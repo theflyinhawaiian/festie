@@ -1,32 +1,35 @@
 package com.mullipr.festie.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.mullipr.festie.api.ArtistsService
 import com.mullipr.festie.api.endpoints.SearchResource
+import com.mullipr.festie.model.SearchArtistsUiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SearchArtistsViewModel(private val searchResource : SearchResource) : ViewModel() {
+class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
+    private val _uiState = MutableStateFlow(SearchArtistsUiState(listOf(), false, listOf()))
+    val uiState = _uiState.asStateFlow()
+
+    private val artistsService = ArtistsService(searchResource)
 
     fun fetchArtists() {
+        _uiState.update {
+            it.copy(isLoading = true)
+        }
+
         viewModelScope.launch {
-            val response = searchResource.search("madeon")
+            val artists = artistsService.search("madeon")
 
-            if(!response.isSuccessful){
-                Log.d("festie", "Error fetching artists: ${response.errorBody()}")
-                return@launch
-            }
-
-            val result = response.body()
-
-            if(result == null || result.artists.items.count() == 0){
-                Log.d("festie", "No artists returned!")
-                return@launch
-            }
-
-            for(artist in result.artists.items){
-                Log.d("festie", "Found artist: $artist")
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    artists = artists
+                )
             }
         }
     }
