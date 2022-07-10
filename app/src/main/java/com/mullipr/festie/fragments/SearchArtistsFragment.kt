@@ -18,7 +18,6 @@ import com.mullipr.festie.databinding.SearchArtistsFragmentBinding
 import com.mullipr.festie.model.Artist
 import com.mullipr.festie.viewModel.SearchArtistsViewModel
 import kotlinx.coroutines.launch
-import okhttp3.internal.notifyAll
 
 class SearchArtistsFragment : Fragment(){
     private lateinit var binding : SearchArtistsFragmentBinding
@@ -37,7 +36,7 @@ class SearchArtistsFragment : Fragment(){
 
         val artistClickedListener = { artist : Artist -> viewModel.artistSelected(artist) }
 
-        artistAdapter = ArtistAdapter(listOf(), artistClickedListener).also {
+        artistAdapter = ArtistAdapter(requireContext(), listOf(), artistClickedListener).also {
             binding.artistsView.adapter = it
         }
         binding.artistsView.layoutManager = LinearLayoutManager(requireContext())
