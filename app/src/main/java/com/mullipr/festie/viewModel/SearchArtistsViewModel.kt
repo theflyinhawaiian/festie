@@ -2,7 +2,6 @@ package com.mullipr.festie.viewModel
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -19,7 +18,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
-    private val _uiState = MutableStateFlow(SearchArtistsUiState(listOf(), false, listOf()))
+    private val _uiState = MutableStateFlow(SearchArtistsUiState(listOf(), false, 0))
     val uiState = _uiState.asStateFlow()
 
     private val artistsService = ArtistsService(searchResource)
@@ -44,6 +43,8 @@ class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
                     val r = Random()
                     artist.imageDrawable = ColorDrawable(Color.argb(255, r.nextInt(256), r.nextInt(256), r.nextInt(256)))
                 }
+
+                artist.isSelected = artist in selectedArtists
             }
 
             _uiState.update {
@@ -60,7 +61,12 @@ class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
             selectedArtists.remove(artist)
         else
             selectedArtists.add(artist)
-        Log.d("festie", "selected artists changed: $selectedArtists")
+
+        artist.isSelected = !artist.isSelected
+
+        _uiState.update {
+            it.copy(selectedArtistsCount = selectedArtists.size)
+        }
     }
 
     class Factory(private val searchResource : SearchResource) : ViewModelProvider.Factory{

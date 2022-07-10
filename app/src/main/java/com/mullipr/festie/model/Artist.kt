@@ -8,4 +8,5 @@ data class Artist(val genres : List<String>,
                   val popularity : Int,
                   val image : ArtistImage?){
     var imageDrawable : Drawable? = null
+    var isSelected : Boolean = false
 }

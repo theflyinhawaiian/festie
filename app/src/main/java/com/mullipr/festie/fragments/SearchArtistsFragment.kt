@@ -64,6 +64,8 @@ class SearchArtistsFragment : Fragment(){
                 viewModel.uiState.collect {
                     artistAdapter.list = it.artists
                     artistAdapter.notifyDataSetChanged()
+
+                    binding.selectionIndicatorText.text = it.selectedArtistsCount.toString()
                 }
             }
         }

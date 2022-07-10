@@ -26,7 +26,6 @@ class ArtistAdapter(var list : List<Artist>,
         )
         holder.itemView.setOnClickListener {
             listener(item)
-            holder.clicked()
         }
     }
 
@@ -38,11 +37,8 @@ class ArtistAdapter(var list : List<Artist>,
                 item.artistImage.setImageDrawable(artist.imageDrawable)
             }
 
+            item.artistCheckbox.isChecked = artist.isSelected
             item.artistName.text = artist.name
-        }
-
-        fun clicked(){
-            item.artistCheckbox.isChecked = !item.artistCheckbox.isChecked
         }
     }
 }
