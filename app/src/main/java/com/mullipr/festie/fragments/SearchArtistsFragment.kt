@@ -3,6 +3,8 @@ package com.mullipr.festie.fragments
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -64,6 +66,9 @@ class SearchArtistsFragment : Fragment(){
                     artistAdapter.list = it.artists
                     artistAdapter.notifyDataSetChanged()
 
+                    binding.selectionIndicatorCardview.visibility =
+                        if(it.selectedArtistsCount > 0) VISIBLE
+                        else GONE
                     binding.selectionIndicatorText.text = it.selectedArtistsCount.toString()
                 }
             }
