@@ -33,7 +33,7 @@ class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
             val artists = artistsService.search(text)
 
             for(artist in artists){
-                artist.isSelected = artist in selectedArtists
+                artist.isSelected = selectedArtists.find { it.id == artist.id } != null
             }
 
             _uiState.update {

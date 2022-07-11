@@ -10,5 +10,5 @@ data class ArtistDAO(@field:Json(name="genres") val genres : List<String>,
                   @field:Json(name="popularity") val popularity : Int,
                   @field:Json(name="images") val images : List<ArtistImage>) {
 
-    fun toInternal() = Artist(genres, id, name, popularity, images.minByOrNull { i -> i.width })
+    fun toInternal() = Artist(genres, id, name, popularity, images.minByOrNull { i -> i.width }?.url ?: "")
 }

@@ -41,19 +41,10 @@ class ArtistAdapter(
 
     inner class ViewHolder(private var item : ArtistCardBinding) : RecyclerView.ViewHolder(item.root){
         fun bind(artist: Artist){
-            if(artist.image?.url != null){
-                Glide.with(ctx).load(artist.image.url).into(item.artistImage)
+            if(artist.hasImage()){
+                Glide.with(ctx).load(artist.image).into(item.artistImage)
             }else {
-                val hash = artist.name.hashCode()
-                var color = "#"
-                for (i in 0..2) {
-                    val value = Integer.toHexString((hash shr (i * 8)) and 0xFF)
-                    if(value.length < 2)
-                        color += "0"
-                    color += value
-                }
-                Log.d("festie", "hashed artist: ${artist.name}, hash code: $hash, color code: $color")
-                val drawable = ColorDrawable(Color.parseColor(color))
+                val drawable = ColorDrawable(Color.parseColor(artist.imageColor))
                 Glide.with(ctx).load(drawable).into(item.artistImage)
             }
 
