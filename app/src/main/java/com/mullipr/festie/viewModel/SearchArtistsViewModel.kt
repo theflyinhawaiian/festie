@@ -19,7 +19,7 @@ class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
 
     private val artistsService = ArtistsService(searchResource)
 
-    private val selectedArtists = mutableListOf<Artist>()
+    val selectedArtists = mutableListOf<Artist>()
 
     fun searchArtists(text : String?) {
         if(text == null)
@@ -46,7 +46,7 @@ class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
     }
 
     fun artistSelected(artist : Artist){
-        if(artist in selectedArtists)
+        if(selectedArtists.find { it.id == artist.id } != null)
             selectedArtists.remove(artist)
         else
             selectedArtists.add(artist)

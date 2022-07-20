@@ -7,12 +7,15 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.SearchView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mullipr.festie.R
 import com.mullipr.festie.adapters.ArtistAdapter
 import com.mullipr.festie.api.ApiService
 import com.mullipr.festie.api.endpoints.SearchResource
@@ -53,6 +56,11 @@ class SearchArtistsFragment : Fragment(){
                 return false
             }
         })
+
+        binding.selectionIndicatorCardview.setOnClickListener {
+            val bundle = bundleOf("artists" to viewModel.selectedArtists.toTypedArray())
+            findNavController().navigate(R.id.action_searchArtistsFragment_to_selectedArtistsFragment, bundle)
+        }
 
         return binding.root
     }

@@ -23,7 +23,26 @@
         android:id="@+id/searchArtistsFragment"
         android:name="com.mullipr.festie.fragments.SearchArtistsFragment"
         android:label="search_artists_fragment"
-        tools:layout="@layout/search_artists_fragment" />
+        tools:layout="@layout/search_artists_fragment">
+        <action
+            android:id="@+id/action_searchArtistsFragment_to_selectedArtistsFragment"
+            app:destination="@id/selectedArtistsFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/selectedArtistsFragment"
+        android:name="com.mullipr.festie.fragments.SelectedArtistsFragment"
+        android:label="selected_artists_fragment"
+        tools:layout="@layout/selected_artists_fragment" >
+        <argument
+            android:name="artists"
+            app:argType="com.mullipr.festie.model.Artist[]"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_selectedArtistsFragment_to_searchArtistsFragment"
+            app:destination="@id/searchArtistsFragment"
+            app:popUpTo="@id/searchArtistsFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
     <action android:id="@+id/action_global_logout"
         app:destination="@id/loginFragment"/>
 </navigation>
