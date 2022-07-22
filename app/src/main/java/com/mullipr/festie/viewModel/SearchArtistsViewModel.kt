@@ -13,13 +13,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
-    private val _uiState = MutableStateFlow(SearchArtistsUiState(listOf(), false, 0))
+class SearchArtistsViewModel(searchResource : SearchResource, artists : List<Artist>) : ViewModel() {
+    private val _uiState = MutableStateFlow(SearchArtistsUiState(listOf(), false, artists.count()))
     val uiState = _uiState.asStateFlow()
 
     private val artistsService = ArtistsService(searchResource)
 
-    val selectedArtists = mutableListOf<Artist>()
+    val selectedArtists = artists.toMutableList()
 
     fun searchArtists(text : String?) {
         if(text == null)
@@ -58,10 +58,11 @@ class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
         }
     }
 
-    class Factory(private val searchResource : SearchResource) : ViewModelProvider.Factory{
+    class Factory(private val searchResource : SearchResource,
+                  private val artists : List<Artist>) : ViewModelProvider.Factory{
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass : Class<T>) : T {
-            return SearchArtistsViewModel(searchResource) as T
+            return SearchArtistsViewModel(searchResource, artists) as T
         }
     }
 }

@@ -3,4 +3,6 @@
     <string name="sign_in_with_spotify">Sign in with Spotify</string>
     <string name="logout">Logout</string>
     <string name="artist_image">Artist Image</string>
+    <string name="search_artists">Search Artists</string>
+    <string name="create_playlist">Create Playlist</string>
 </resources>

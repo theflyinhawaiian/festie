@@ -24,6 +24,10 @@
         android:name="com.mullipr.festie.fragments.SearchArtistsFragment"
         android:label="search_artists_fragment"
         tools:layout="@layout/search_artists_fragment">
+        <argument
+            android:name="artists"
+            app:argType="com.mullipr.festie.model.Artist[]"
+            android:defaultValue="@null" />
         <action
             android:id="@+id/action_searchArtistsFragment_to_selectedArtistsFragment"
             app:destination="@id/selectedArtistsFragment"/>

@@ -29,8 +29,15 @@ class SearchArtistsFragment : Fragment(){
     private lateinit var artistAdapter : ArtistAdapter
 
     private val viewModel : SearchArtistsViewModel by viewModels {
+        val parcels = arguments?.getParcelableArray("artists")
+        val artists = mutableListOf<Artist>()
+        if(parcels != null) {
+            for (parcel in parcels) {
+                artists.add(parcel as Artist)
+            }
+        }
         val res = ApiService(requireContext()).get().create(SearchResource::class.java)
-        SearchArtistsViewModel.Factory(res)
+        SearchArtistsViewModel.Factory(res, artists)
     }
 
     override fun onCreateView(

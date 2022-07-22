@@ -39,6 +39,12 @@ class ArtistAdapter(
 
     override fun getItemCount(): Int = list.size
 
+    fun updateSelected(selectedArtists : List<Artist>) {
+        for(artist in list){
+            artist.isSelected = selectedArtists.find { it.id == artist.id } != null
+        }
+    }
+
     inner class ViewHolder(private var item : ArtistCardBinding) : RecyclerView.ViewHolder(item.root){
         fun bind(artist: Artist){
             if(artist.hasImage()){
