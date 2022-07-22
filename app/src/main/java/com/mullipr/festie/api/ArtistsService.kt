@@ -16,7 +16,7 @@ class ArtistsService(private val searchResource : SearchResource) {
 
         val result = response.body()
 
-        if(result == null || result.artists.items.count() == 0){
+        if(result == null || result.artists.items.isEmpty()){
             Log.d("festie", "No artists returned!")
             return listOf()
         }

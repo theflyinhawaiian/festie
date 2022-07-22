@@ -1,6 +1,8 @@
 package com.mullipr.festie.fragments
 
 import android.os.Bundle
+import android.os.Parcel
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -9,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,6 +24,7 @@ import com.mullipr.festie.api.ApiService
 import com.mullipr.festie.api.endpoints.SearchResource
 import com.mullipr.festie.databinding.SearchArtistsFragmentBinding
 import com.mullipr.festie.model.Artist
+import com.mullipr.festie.model.SearchArtistsUiState
 import com.mullipr.festie.viewModel.SearchArtistsViewModel
 import kotlinx.coroutines.launch
 
@@ -28,16 +32,37 @@ class SearchArtistsFragment : Fragment(){
     private lateinit var binding : SearchArtistsFragmentBinding
     private lateinit var artistAdapter : ArtistAdapter
 
+    private lateinit var lastState : SearchArtistsUiState
+
     private val viewModel : SearchArtistsViewModel by viewModels {
-        val parcels = arguments?.getParcelableArray("artists")
-        val artists = mutableListOf<Artist>()
-        if(parcels != null) {
-            for (parcel in parcels) {
-                artists.add(parcel as Artist)
-            }
-        }
         val res = ApiService(requireContext()).get().create(SearchResource::class.java)
-        SearchArtistsViewModel.Factory(res, artists)
+        SearchArtistsViewModel.Factory(res)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if(savedInstanceState != null){
+            val artists = savedInstanceState.getParcelableArrayList<Artist>("artists")?.toList() ?: listOf()
+            val selectedArtists = savedInstanceState.getParcelableArrayList<Artist>("selected_artists")?.toList() ?: listOf()
+            val count = selectedArtists.size
+            viewModel.restoreUiState(SearchArtistsUiState(artists, false, count, selectedArtists))
+            return
+        }
+
+        val parcels = arguments?.getParcelableArray("artists") ?: return
+
+        val artists = mutableListOf<Artist>()
+        for (parcel in parcels) {
+            artists.add(parcel as Artist)
+        }
+        viewModel.restoreUiState(SearchArtistsUiState(listOf(), false, artists.size, artists))
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelableArrayList("artists", ArrayList<Artist>(lastState.artists))
+        outState.putParcelableArrayList("selected_artists", ArrayList<Artist>(viewModel.selectedArtists))
     }
 
     override fun onCreateView(
@@ -78,6 +103,8 @@ class SearchArtistsFragment : Fragment(){
         viewLifecycleOwner.lifecycleScope.launch{
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
                 viewModel.uiState.collect {
+                    lastState = it
+
                     artistAdapter.list = it.artists
                     artistAdapter.notifyDataSetChanged()
 

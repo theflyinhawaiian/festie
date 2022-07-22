@@ -15,6 +15,7 @@ import com.mullipr.festie.R
 import com.mullipr.festie.adapters.ArtistAdapter
 import com.mullipr.festie.databinding.SelectedArtistsFragmentBinding
 import com.mullipr.festie.model.Artist
+import com.mullipr.festie.model.SelectedArtistsUiState
 import com.mullipr.festie.viewModel.SelectedArtistsViewModel
 import kotlinx.coroutines.launch
 
@@ -23,14 +24,7 @@ class SelectedArtistsFragment : Fragment() {
 
     private lateinit var binding : SelectedArtistsFragmentBinding
     private val viewModel : SelectedArtistsViewModel by viewModels{
-        val parcels = arguments?.getParcelableArray("artists")
-        val artists = mutableListOf<Artist>()
-        if(parcels != null) {
-            for (parcel in parcels) {
-                artists.add(parcel as Artist)
-            }
-        }
-        SelectedArtistsViewModel.Factory(artists)
+        SelectedArtistsViewModel.Factory()
     }
 
     private lateinit var artistAdapter: ArtistAdapter
@@ -42,6 +36,21 @@ class SelectedArtistsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        if(savedInstanceState != null){
+            val startingList = savedInstanceState.getParcelableArrayList<Artist>("artists") ?: listOf()
+            val currentList = savedInstanceState.getParcelableArrayList<Artist>("selected_artists") ?: listOf()
+            viewModel.restoreUiState(SelectedArtistsUiState(startingList, currentList, currentList.size))
+            return
+        }
+
+        val parcels = arguments?.getParcelableArray("artists") ?: return
+        val artists = mutableListOf<Artist>()
+
+        for (parcel in parcels) {
+            artists.add(parcel as Artist)
+        }
+        viewModel.restoreUiState(SelectedArtistsUiState(artists, artists, artists.size))
     }
 
     override fun onCreateView(

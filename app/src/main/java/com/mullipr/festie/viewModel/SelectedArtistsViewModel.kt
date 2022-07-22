@@ -8,11 +8,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class SelectedArtistsViewModel(private val selectedArtists : List<Artist>) : ViewModel() {
-    private val _uiState = MutableStateFlow(SelectedArtistsUiState(selectedArtists,selectedArtists))
+class SelectedArtistsViewModel : ViewModel() {
+    private val _uiState = MutableStateFlow(SelectedArtistsUiState(listOf(), listOf()))
     val uiState = _uiState.asStateFlow()
 
-    val currentList = selectedArtists.toMutableList()
+    val currentList = mutableListOf<Artist>()
+
+    fun restoreUiState(state : SelectedArtistsUiState){
+        currentList.addAll(state.selectedArtists)
+        _uiState.update {
+            state
+        }
+    }
 
     fun artistSelected(artist : Artist){
         if(currentList.find { it.id == artist.id } != null)
@@ -22,14 +29,14 @@ class SelectedArtistsViewModel(private val selectedArtists : List<Artist>) : Vie
 
         artist.isSelected = !artist.isSelected
         _uiState.update {
-            it.copy(selectedArtists = currentList, artistsCount = currentList.count())
+            it.copy(selectedArtists = currentList, artistsCount = currentList.size)
         }
     }
 
-    class Factory(private val selectedArtists : List<Artist>) : ViewModelProvider.Factory{
+    class Factory() : ViewModelProvider.Factory{
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass : Class<T>) : T {
-            return SelectedArtistsViewModel(selectedArtists) as T
+            return SelectedArtistsViewModel() as T
         }
     }
 }
