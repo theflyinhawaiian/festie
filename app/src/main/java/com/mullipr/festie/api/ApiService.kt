@@ -1,15 +1,17 @@
 package com.mullipr.festie.api
 
-import android.content.Context
 import com.mullipr.festie.BuildConfig
 import com.mullipr.festie.auth.AuthInterceptor
+import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.Authenticator
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import javax.inject.Inject
 
-class ApiService(ctx : Context) {
+class ApiService @Inject constructor(tokenAuthenticator: TokenAuthenticator,
+                                     authInterceptor: AuthInterceptor) {
     companion object {
         const val baseUrl = "https://api.spotify.com/v1/"
     }
@@ -18,10 +20,8 @@ class ApiService(ctx : Context) {
     private val retrofit : Retrofit
 
     init {
-        val authenticator = TokenAuthenticator(ctx)
-
-        client = getClientBuilder(authenticator)
-            .addInterceptor(AuthInterceptor(ctx))
+        client = getClientBuilder(tokenAuthenticator)
+            .addInterceptor(authInterceptor)
             .build()
 
         retrofit = Retrofit.Builder()

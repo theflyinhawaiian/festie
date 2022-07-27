@@ -17,15 +17,14 @@ import com.mullipr.festie.databinding.SelectedArtistsFragmentBinding
 import com.mullipr.festie.model.Artist
 import com.mullipr.festie.model.SelectedArtistsUiState
 import com.mullipr.festie.viewModel.SelectedArtistsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class SelectedArtistsFragment : Fragment() {
 
     private lateinit var binding : SelectedArtistsFragmentBinding
-    private val viewModel : SelectedArtistsViewModel by viewModels{
-        SelectedArtistsViewModel.Factory()
-    }
+    private val viewModel : SelectedArtistsViewModel by viewModels()
 
     private lateinit var artistAdapter: ArtistAdapter
 
@@ -56,7 +55,7 @@ class SelectedArtistsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         binding = SelectedArtistsFragmentBinding.inflate(layoutInflater)
 
         val artistClickedListener = { artist : Artist -> viewModel.artistSelected(artist) }

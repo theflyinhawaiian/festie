@@ -1,24 +1,23 @@
 package com.mullipr.festie.auth
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.mullipr.festie.BuildConfig
 import com.mullipr.festie.util.SharedPrefsWrapper
 import net.openid.appauth.*
+import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class OAuthService(ctx : Context) {
-    private val authService = AuthorizationService(ctx)
-    private val sharedPreferences = SharedPrefsWrapper(ctx)
+class OAuthService @Inject constructor(private val authService : AuthorizationService,
+                                       private val sharedPreferences : SharedPrefsWrapper) : IOAuthService {
 
     private val serviceConfig = AuthorizationServiceConfiguration(
         Uri.parse("https://accounts.spotify.com/authorize"),
         Uri.parse("https://accounts.spotify.com/api/token")
     )
 
-    fun getAuthIntent() : Intent {
+    override fun getAuthIntent() : Intent {
         val authRequest: AuthorizationRequest = AuthorizationRequest.Builder(
             serviceConfig,
             BuildConfig.SPOTIFY_CLIENT_ID,
@@ -30,7 +29,7 @@ class OAuthService(ctx : Context) {
         return authService.getAuthorizationRequestIntent(authRequest)
     }
 
-    suspend fun refreshAuthToken() : String? {
+    override suspend fun refreshAuthToken() : String? {
         return suspendCoroutine { continuation ->
             val refreshToken = sharedPreferences.getRefreshToken()
             val tokenRequest =
@@ -51,9 +50,9 @@ class OAuthService(ctx : Context) {
         }
     }
 
-    fun isUserAuthenticated() : Boolean = sharedPreferences.hasAccessTokens()
+    override fun isUserAuthenticated() : Boolean = sharedPreferences.hasAccessTokens()
 
-    fun processAuthResponse(data : Intent?, successCallback : () -> Unit){
+    override fun processAuthResponse(data : Intent?, successCallback : () -> Unit){
         if(data == null)
             return
 
@@ -74,7 +73,7 @@ class OAuthService(ctx : Context) {
         return
     }
 
-    fun invalidateTokens() {
+    override fun invalidateTokens() {
         sharedPreferences.invalidateAccessTokens()
     }
 }

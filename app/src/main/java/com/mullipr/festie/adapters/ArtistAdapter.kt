@@ -3,14 +3,12 @@ package com.mullipr.festie.adapters
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mullipr.festie.databinding.ArtistCardBinding
 import com.mullipr.festie.model.Artist
-import java.util.*
 
 class ArtistAdapter(
     val ctx: Context,

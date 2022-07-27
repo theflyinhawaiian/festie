@@ -1,23 +1,22 @@
 package com.mullipr.festie.viewModel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.mullipr.festie.api.ArtistsService
-import com.mullipr.festie.api.endpoints.SearchResource
 import com.mullipr.festie.model.Artist
 import com.mullipr.festie.model.SearchArtistsUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
+@HiltViewModel
+class SearchArtistsViewModel @Inject constructor(private val artistsService : ArtistsService) : ViewModel() {
     private val _uiState = MutableStateFlow(SearchArtistsUiState(listOf(), false, 0))
     val uiState = _uiState.asStateFlow()
-
-    private val artistsService = ArtistsService(searchResource)
 
     val selectedArtists = mutableListOf<Artist>()
 
@@ -62,13 +61,6 @@ class SearchArtistsViewModel(searchResource : SearchResource) : ViewModel() {
 
         _uiState.update {
             it.copy(selectedArtistsCount = selectedArtists.size)
-        }
-    }
-
-    class Factory(private val searchResource : SearchResource) : ViewModelProvider.Factory{
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass : Class<T>) : T {
-            return SearchArtistsViewModel(searchResource) as T
         }
     }
 }

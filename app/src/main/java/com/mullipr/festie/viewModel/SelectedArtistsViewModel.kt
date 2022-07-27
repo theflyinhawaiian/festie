@@ -1,14 +1,16 @@
 package com.mullipr.festie.viewModel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.mullipr.festie.model.Artist
 import com.mullipr.festie.model.SelectedArtistsUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
-class SelectedArtistsViewModel : ViewModel() {
+@HiltViewModel
+class SelectedArtistsViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(SelectedArtistsUiState(listOf(), listOf()))
     val uiState = _uiState.asStateFlow()
 
@@ -30,13 +32,6 @@ class SelectedArtistsViewModel : ViewModel() {
         artist.isSelected = !artist.isSelected
         _uiState.update {
             it.copy(selectedArtists = currentList, artistsCount = currentList.size)
-        }
-    }
-
-    class Factory() : ViewModelProvider.Factory{
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass : Class<T>) : T {
-            return SelectedArtistsViewModel() as T
         }
     }
 }

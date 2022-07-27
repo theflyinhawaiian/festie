@@ -13,33 +13,38 @@ import com.mullipr.festie.R
 import com.mullipr.festie.auth.OAuthService
 import com.mullipr.festie.databinding.MainPageFragmentBinding
 import com.mullipr.festie.viewModel.LoginViewModel
-import kotlinx.coroutines.flow.collect
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LoginFragment : Fragment() {
     companion object {
         fun newInstance() = LoginFragment()
-        val RC_AUTH = 100;
+        val RC_AUTH = 100
     }
 
     private lateinit var binding: MainPageFragmentBinding
-    private lateinit var oAuthService : OAuthService
-    private val viewModel : LoginViewModel by viewModels {
-        LoginViewModel.Factory(oAuthService, arguments?.getBoolean("loggingOut") ?: false)
+
+    @Inject lateinit var oAuthService : OAuthService
+
+    private val viewModel : LoginViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?){
+        super.onCreate(savedInstanceState)
+        viewModel.initialize(arguments?.getBoolean("loggingOut") ?: false)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = MainPageFragmentBinding.inflate(layoutInflater)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        oAuthService = OAuthService(requireContext())
 
         lifecycleScope.launchWhenStarted {
             viewModel.uiState.collect {

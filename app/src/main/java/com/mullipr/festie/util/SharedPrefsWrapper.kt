@@ -2,8 +2,10 @@ package com.mullipr.festie.util
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class SharedPrefsWrapper(ctx : Context) {
+class SharedPrefsWrapper @Inject constructor(@ApplicationContext ctx : Context) {
     private companion object {
         const val REFRESH_TOKEN_ENTRY = "spotify_refresh_token"
         const val ACCESS_TOKEN_ENTRY = "spotify_access_token"
